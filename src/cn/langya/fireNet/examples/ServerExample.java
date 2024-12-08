@@ -10,7 +10,14 @@ import java.io.IOException;
  */
 public class ServerExample {
     public static void main(String[] args) throws IOException {
-        ServerHandler server = new ServerHandler(12345, packet -> System.out.printf("Received packet with ID: %s Data: %s%n",packet.getId(), packet.getDataWithString()));
-        server.start();
+        final ServerHandler[] serverHolder = new ServerHandler[1];
+        serverHolder[0] = new ServerHandler(12345, packet -> {
+            System.out.printf("Received packet with ID: %s Data: %s%n", packet.getId(), packet.getDataWithString());
+            if (packet.getId() == 1) {
+                serverHolder[0].broadcast(packet);
+            }
+        });
+
+        serverHolder[0].start();
     }
 }
