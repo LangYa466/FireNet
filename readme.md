@@ -1,6 +1,7 @@
 # FireNet🔥
 
-FireNet🔥 是一个 基于 Java NIO 的 Socket 服务端框架，它与传统的 Socket 有本质上的不同
+FireNet🔥 是一个 基于 Java NIO 的 Socket 网络框架，它与传统的 Socket 有本质上的不同
+项目仓库里面有客户端与服务端代码示例
 
 ## 特点
 - **多客户端管理**：可以轻松管理多个客户端连接。
