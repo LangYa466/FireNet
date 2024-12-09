@@ -1,6 +1,7 @@
 package cn.langya.fireNet.client;
 
 import cn.langya.fireNet.server.packet.Packet;
+import cn.langya.fireNet.server.packet.impl.MessagePacket;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -48,7 +49,7 @@ public class ClientHandler {
                 if (bytesRead > 0) {
                     buffer.flip();
                     Packet packet = Packet.decode(buffer);
-                    handleIncomingPacket(packet);
+                    if (packet != null) handleIncomingPacket(packet);
                 } else if (bytesRead == -1) {
                     close();
                     break;
@@ -63,9 +64,10 @@ public class ClientHandler {
     private void handleIncomingPacket(Packet packet) {
         // message-packet
         if (packet.getId() == 1) {
-            System.out.println("Received message packet: " + packet.getDataWithString());
+            MessagePacket messagePacket = (MessagePacket) packet;
+            System.out.println("Received message packet: " + messagePacket.getDataWithString());
         } else {
-            System.out.println("Received packet: ID=" + packet.getId() + ", Content=" + packet.getDataWithString());
+            System.out.println("Received packet: ID=" + packet.getId());
         }
     }
 

@@ -18,11 +18,14 @@ public class ServerHandler {
     private ServerSocketChannel serverChannel;
     private Selector selector;
     private final PacketHandler packetHandler;
+    private final int maxBytes;
 
     private final ConcurrentHashMap<SocketChannel, String> clients = new ConcurrentHashMap<>();
 
-    public ServerHandler(int port, PacketHandler packetHandler) {
+    public ServerHandler(int port, int maxBytes, PacketHandler packetHandler) {
         this.port = port;
+        this.maxBytes = maxBytes;
+        Packet.maxBytes = maxBytes;
         this.packetHandler = packetHandler;
     }
 
@@ -57,7 +60,7 @@ public class ServerHandler {
         clientChannel.configureBlocking(false);
         clientChannel.register(selector, SelectionKey.OP_READ);
 
-        // 唯一标识
+        // 唯一标识aa
         String clientAddress = clientChannel.getRemoteAddress().toString();
         clients.put(clientChannel, clientAddress);
 
@@ -73,8 +76,14 @@ public class ServerHandler {
             if (bytesRead > 0) {
                 buffer.flip();
                 Packet packet = Packet.decode(buffer);
-                packetHandler.handle(packet);
 
+                // 如果数据包解码失败 忽略且继续aa
+                if (packet == null) {
+                    System.err.println("Received invalid packet from " + clients.get(clientChannel));
+                    return;
+                }
+
+                packetHandler.handle(packet);
                 System.out.println("Received packet from " + clients.get(clientChannel) + ": ID=" + packet.getId());
             } else if (bytesRead == -1) {
                 disconnectClient(clientChannel, key);
@@ -94,7 +103,7 @@ public class ServerHandler {
             clientChannel.close();
             System.out.println("Client disconnected: " + clientAddress);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Failed to disconnect client: " + clients.get(clientChannel) + " - " + e.getMessage());
         }
     }
 
@@ -106,26 +115,27 @@ public class ServerHandler {
         }
     }
 
-    public void broadcast(Packet packet) throws IOException {
+    public void broadcast(Packet packet) {
         for (SocketChannel client : clients.keySet()) {
             if (client.isConnected()) {
-                sendToClient(client, packet);
+                try {
+                    sendToClient(client, packet);
+                } catch (IOException e) {
+                    System.err.println("Failed to send packet to client: " + clients.get(client) + " - " + e.getMessage());
+                }
             }
         }
-        System.out.println("Broadcasted packet: ID=" + packet.getId());
+        System.out.println("Broadcast packet: ID=" + packet.getId());
     }
 
     public void stop() throws IOException {
         for (SocketChannel client : clients.keySet()) {
             client.close();
         }
+
         clients.clear();
 
-        if (serverChannel != null) {
-            serverChannel.close();
-        }
-        if (selector != null) {
-            selector.close();
-        }
+        if (serverChannel != null) serverChannel.close();
+        if (selector != null) selector.close();
     }
 }

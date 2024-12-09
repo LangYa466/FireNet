@@ -11,11 +11,11 @@ import java.io.IOException;
 public class ServerExample {
     public static void main(String[] args) throws IOException {
         final ServerHandler[] serverHolder = new ServerHandler[1];
-        serverHolder[0] = new ServerHandler(12345, packet -> {
-            System.out.printf("Received packet with ID: %s Data: %s%n", packet.getId(), packet.getDataWithString());
-            if (packet.getId() == 1) {
-                serverHolder[0].broadcast(packet);
-            }
+        // 根据具体业务要求可以改maxBytes 在 UTF-8 编码中，一个英文字为一个字节，一个中文为三个字节1
+        serverHolder[0] = new ServerHandler(12345,512, packet -> {
+            System.out.printf("Received packet with ID: %s%n", packet.getId());
+            // message-packet广播 根据具体业务要求可以改aa
+            if (packet.getId() == 1) serverHolder[0].broadcast(packet);
         });
 
         serverHolder[0].start();
