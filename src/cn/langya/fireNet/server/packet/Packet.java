@@ -36,7 +36,7 @@ public class Packet {
 
             // 低级错误 谢谢 @ImFl0wow 的指正
             // 本来写的 > 256 感谢 @baier233 的指正 ByteBuffer 的大小包含了数据包的 ID 和长度字段（共 8 字节）所以需要 ByteBuffer 最大大小 - 8
-           if (length < 0 || length > (maxBytes - 8)) {
+           if (length < 0 || length > 248) {
                 System.err.println("Invalid packet length: " + length);
                 return null;
             }
