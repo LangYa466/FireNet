@@ -108,11 +108,9 @@ public class ServerHandler {
     }
 
     public void sendToClient(SocketChannel client, Packet packet) throws IOException {
-        if (client.isConnected()) {
-            ByteBuffer buffer = packet.encode();
-            client.write(buffer);
-            System.out.println("Sent packet to " + clients.get(client) + ": ID=" + packet.getId());
-        }
+        ByteBuffer buffer = packet.encode();
+        client.write(buffer);
+        System.out.println("Sent packet to " + clients.get(client) + ": ID=" + packet.getId());
     }
 
     public void broadcast(Packet packet) {
