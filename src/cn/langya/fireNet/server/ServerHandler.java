@@ -25,7 +25,7 @@ public class ServerHandler {
     public ServerHandler(int port, int maxBytes, PacketHandler packetHandler) {
         this.port = port;
         this.maxBytes = maxBytes;
-        Packet.maxBytes = maxBytes;
+        Packet.maxBytes = maxBytes - 8;
         this.packetHandler = packetHandler;
     }
 
