@@ -13,8 +13,4 @@ public class MessagePacket extends Packet {
         // 也可以不用中文 可以改aa
         super(1, message.getBytes(StandardCharsets.UTF_8));
     }
-
-    public String getDataWithString() {
-        return new String(data);
-    }
 }

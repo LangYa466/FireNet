@@ -25,6 +25,10 @@ public class Packet {
         return data;
     }
 
+    public String getDataWithString() {
+        return new String(data);
+    }
+
     public static Packet decode(ByteBuffer buffer) {
         try {
             int id = buffer.getInt();

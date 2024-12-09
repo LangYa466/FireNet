@@ -69,7 +69,7 @@ public class ServerHandler {
 
     private void handleRead(SelectionKey key) {
         SocketChannel clientChannel = (SocketChannel) key.channel();
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        ByteBuffer buffer = ByteBuffer.allocate(maxBytes);
 
         try {
             int bytesRead = clientChannel.read(buffer);
